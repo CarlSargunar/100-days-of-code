@@ -1,9 +1,6 @@
-
-using System;
-
+﻿using System;
 namespace ConsoleApp
 {
-
     public class Todo
     {
         public string Task { get; set; }

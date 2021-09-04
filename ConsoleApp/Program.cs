@@ -5,46 +5,92 @@ using Newtonsoft.Json;
 
 namespace ConsoleApp
 {
+    /*
+    Todo:
+
+    Debug messages aren't working.
+    Use String interpolation instead of switch statement
+    */
     class Program
     {
-
         private const string _todoFile = "todo.json";
-        private static List<Todo> _todoList { get; set; }
 
         static void Main(string[] args)
         {
-            _todoList = new List<Todo>();
+            var _todoList = new List<Todo>();
             Console.WriteLine("Todo App in C#");
 
             ReadFromFile();
 
-            _todoList.Add(new Todo() { Task = "Tesst", Completed = false });
-            _todoList.Add(new Todo() { Task = "Teadwawd", Completed = true });
+            var action = MainAction.Waiting;
+            while (action != MainAction.Exit)
+            {
+                if (action == MainAction.Waiting)
+                {
+                    ShowList(_todoList);
+                }
+                else if (action == MainAction.Select_Item)
+                {
+                    ItemOperations(_todoList);
+                }
+                else if (action == MainAction.NewItem)
+                {
+                    var item = NewItem();
+                    _todoList.Add(item);
+                }
 
+                action = MainOperations();
+            }
 
-            WriteToFile();
-
+            WriteToFile (_todoList);
         }
 
-        static void WriteToFile()
+        /// <summary>
+        /// Save the live data to the output file
+        /// </summary>
+        /// <param name="_todoList"></param>
+        static void WriteToFile(List<Todo> _todoList)
         {
             var op = JsonConvert.SerializeObject(_todoList);
-            File.WriteAllText(_todoFile, op);
-
+            File.WriteAllText (_todoFile, op);
         }
 
-        static void ReadFromFile(){
-            Console.WriteLine("Reading from File");
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        static List<Todo> ReadFromFile()
+        {
+            //Debug.WriteLine("Reading from File");
+            var _todoList = new List<Todo>();
+
             if (File.Exists(_todoFile))
             {
-                Console.WriteLine("File found");
-
+                //Debug.WriteLine("File found");
                 var fileContent = File.ReadAllText(_todoFile);
-                Console.WriteLine($"Contents: {fileContent}");
+                //Debug.WriteLine($"Contents: {fileContent}");
+
+                try
+                {
+                    var items = JsonConvert.DeserializeObject<List<Todo>>(fileContent);
+                    Console.WriteLine($"Found {items.Count} Todo Items");
+                    _todoList = items;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error : {ex.Message}");
+                }
             }
+
+            return _todoList;
         }
 
-        static void ShowList()
+
+        /// <summary>
+        /// Display the list of Todo Items
+        /// </summary>
+        /// <param name="_todoList"></param>
+        static void ShowList(List<Todo> _todoList)
         {
             foreach (var todo in _todoList)
             {
@@ -54,6 +100,64 @@ namespace ConsoleApp
                     Console.WriteLine($"    {todo.Notes}");
                 }
             }
+        }
+
+
+        static void ItemOperations(List<Todo> _todoList)
+        {
+            Console.WriteLine("Select Item");
+
+        }
+
+        static Todo NewItem()
+        {
+            Console.WriteLine("New Item. Enter Todo Text");
+            var text = Console.ReadLine();
+            Console.WriteLine("Enter Notes");
+            var notes = Console.ReadLine();
+            var item = new Todo() { Task = text, Notes = notes };
+            return item;
+        }
+
+        static MainAction MainOperations(){
+
+            MainAction response =  MainAction.Waiting;
+            Console.WriteLine("Choose Action. Type H for help");
+
+            // Thread will be blocked here
+            var ip = Console.ReadKey().KeyChar.ToString().ToUpperInvariant();
+            //Debug.WriteLine($"You chose {ip}");
+            Console.WriteLine();
+
+
+            // change to String Interpolation
+            switch (ip){
+                case "H":
+                    Console.WriteLine("Console Todo App :");
+                    Console.WriteLine(" H - This help page");
+                    Console.WriteLine(" N - New ToDo");
+                    Console.WriteLine(" S - Select Todo");
+                    response = MainAction.Waiting;
+                    break;
+
+                case "N":
+                    response = MainAction.NewItem;
+                    break;
+
+
+                case "S":
+                    response = MainAction.Select_Item;
+                    break;
+
+                case "X":
+                default:
+                    Console.WriteLine("Exit");
+                    response = MainAction.Exit;
+                    break;
+
+            }
+
+            return response;
         }
     }
 }
