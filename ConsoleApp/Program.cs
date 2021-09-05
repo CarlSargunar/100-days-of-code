@@ -105,8 +105,18 @@ namespace ConsoleApp
 
         static void ItemOperations(List<Todo> _todoList)
         {
-            Console.WriteLine("Select Item");
-
+            Console.WriteLine("Select Item - Enter item number:");
+            var ixStr = Console.ReadLine();
+            
+            int ix = 0;
+            if (int.TryParse(ixStr,out ix))
+            {
+                var item = _todoList[ix - 1];
+                if (item != null)
+                {
+                    Console.WriteLine($"Task : {item.Task}");
+                }
+            }
         }
 
         static Todo NewItem()
