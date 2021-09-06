@@ -1,5 +1,6 @@
 ﻿using System;
-namespace ConsoleApp
+
+namespace ConsoleApp.Models
 {
     public class Todo
     {

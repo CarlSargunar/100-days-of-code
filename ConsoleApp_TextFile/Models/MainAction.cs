@@ -1,7 +1,7 @@
 
 using System;
 
-namespace ConsoleApp
+namespace ConsoleApp.Models
 {
 
 
