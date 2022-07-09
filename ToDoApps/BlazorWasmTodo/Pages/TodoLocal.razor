@@ -1,18 +1,28 @@
 ﻿@page "/todolocal"
 
+
 <PageTitle>Todo : Local Storage</PageTitle>
 
 <h1>Todo : Local Storage</h1>
 
-<p role="status">Current count: @currentCount</p>
-
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+@foreach (var item in todoItems)
+{
+    <li>@item.Title</li>
+}
+<h2>Add New Todo:</h2>
+<input placeholder="Something todo" @bind="newTodo"  />
+<button @onclick="AddTodo">Add todo</button>
 
 @code {
-    private int currentCount = 0;
+    private string? newTodo;
+    private List<TodoItem> todoItems = new List<TodoItem>();
 
-    private void IncrementCount()
+    private void AddTodo()
     {
-        currentCount++;
+        if (!string.IsNullOrWhiteSpace(newTodo))
+        {
+            todoItems.Add(new TodoItem { Title = newTodo });
+            newTodo = string.Empty;
+        }
     }
 }
