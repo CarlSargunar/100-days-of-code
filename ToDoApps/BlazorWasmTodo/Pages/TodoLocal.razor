@@ -3,14 +3,17 @@
 
 <PageTitle>Todo : Local Storage</PageTitle>
 
-<h1>Todo : Local Storage</h1>
+<h1>Todo : Local Storage [@todoItems.Count(todo => !todo.IsDone)]</h1>
 
 @foreach (var item in todoItems)
 {
-    <li>@item.Title</li>
+    <li>
+        <input type="checkbox" @bind="item.IsDone" />
+        <input @bind="item.Title" />
+    </li>
 }
 <h2>Add New Todo:</h2>
-<input placeholder="Something todo" @bind="newTodo"  />
+<input placeholder="Something todo" @bind="newTodo" />
 <button @onclick="AddTodo">Add todo</button>
 
 @code {
@@ -21,7 +24,7 @@
     {
         if (!string.IsNullOrWhiteSpace(newTodo))
         {
-            todoItems.Add(new TodoItem { Title = newTodo });
+            todoItems.Add(new TodoItem { Title = newTodo, IsDone = false });
             newTodo = string.Empty;
         }
     }
